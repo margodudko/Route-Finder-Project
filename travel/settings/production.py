@@ -89,21 +89,30 @@ WSGI_APPLICATION = 'travel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+import dj_database_url
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': DB_NAME,
         'USER': DB_USER,
         'PASSWORD': DB_PASSWORD,
         'HOST': DB_HOST,
         'PORT': '5432',
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        },
     }
 }
 
-import dj_database_url
 db = dj_database_url.config()
 DATABASES['default'].update(db)
+
+import sys
+if 'test' in sys.argv or 'test\_coverage' in sys.argv:
+ DATABASES['default']['ENGINE'] = 'django.db.backends.sqlite3'
+ DATABASES['default']['NAME'] = ':memory:'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
